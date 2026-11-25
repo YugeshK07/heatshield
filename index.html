@@ -1,0 +1,1055 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="See how hot a street, bus stop, roof or tree-lined block gets, who it affects, and which fixes would cool it down.">
+<meta name="theme-color" content="#0f766e">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Crect width=%2724%27 height=%2724%27 rx=%276%27 fill=%27%230f766e%27/%3E%3Cpath d=%27M12 4 6 6.5v4.5c0 4 2.6 7.3 6 8.5 3.4-1.2 6-4.5 6-8.5V6.5z%27 fill=%27none%27 stroke=%27white%27 stroke-width=%271.8%27/%3E%3C/svg%3E">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+<title>HeatShield</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+<style>
+/* Layout: modern product UI. Frosted sticky header, rounded cards on a soft canvas, two-column workspaces that stack on phones, bottom tab bar on mobile. */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --tile:#f1f4f8; --tile-2:#e6ebf1;
+  --line:#e3e8ef; --line-strong:#cfd7e2;
+  --ink:#0e1726; --ink-2:#3a4659; --muted:#677388;
+  --primary:#0f766e; --primary-hover:#0b5f58; --on-primary:#ffffff; --primary-soft:#e6f4f2; --primary-ring:rgba(15,118,110,.2); --good-line:#a9d8d1;
+  --warn:#a6560a; --warn-soft:#fdf2e2; --warn-line:#efc98d;
+  --bad:#c4302b; --bad-soft:#fdeeed; --bad-line:#f2b9b6;
+  --glass:rgba(255,255,255,.8);
+  --shadow-sm:0 1px 2px rgba(16,24,40,.06);
+  --shadow:0 1px 2px rgba(16,24,40,.04),0 4px 14px rgba(16,24,40,.05);
+  --shadow-lg:0 12px 32px rgba(16,24,40,.16);
+  --r-sm:8px; --r:14px;
+  --display:"Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --sans:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0a0f17; --surface:#111925; --tile:#172131; --tile-2:#1e2a3c;
+  --line:#212e42; --line-strong:#2d3d55;
+  --ink:#e8eef6; --ink-2:#c0ccdb; --muted:#8b98ad;
+  --primary:#2cc5b2; --primary-hover:#55d8c7; --on-primary:#03231f; --primary-soft:#0f2a2a; --primary-ring:rgba(44,197,178,.28); --good-line:#1e5751;
+  --warn:#f1b552; --warn-soft:#2a2113; --warn-line:#5f461b;
+  --bad:#f2817b; --bad-soft:#2c1719; --bad-line:#62292a;
+  --glass:rgba(17,25,37,.78);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.35);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+  --shadow-lg:0 12px 32px rgba(0,0,0,.55);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0a0f17; --surface:#111925; --tile:#172131; --tile-2:#1e2a3c;
+  --line:#212e42; --line-strong:#2d3d55;
+  --ink:#e8eef6; --ink-2:#c0ccdb; --muted:#8b98ad;
+  --primary:#2cc5b2; --primary-hover:#55d8c7; --on-primary:#03231f; --primary-soft:#0f2a2a; --primary-ring:rgba(44,197,178,.28); --good-line:#1e5751;
+  --warn:#f1b552; --warn-soft:#2a2113; --warn-line:#5f461b;
+  --bad:#f2817b; --bad-soft:#2c1719; --bad-line:#62292a;
+  --glass:rgba(17,25,37,.78);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.35);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+  --shadow-lg:0 12px 32px rgba(0,0,0,.55);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+h1,h2,h3,h4{font-family:var(--display);margin:0;text-wrap:balance;color:var(--ink)}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--primary)}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.num{font-variant-numeric:tabular-nums}
+.label{font:600 13px/1.35 var(--sans);color:var(--muted)}
+.muted{color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--glass);-webkit-backdrop-filter:saturate(180%) blur(14px);backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid var(--line)}
+.top-in{display:flex;align-items:center;gap:16px;min-height:64px}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink);min-width:0}
+.mark{width:34px;height:34px;flex:none;border-radius:10px;background:linear-gradient(140deg,#2bb3a3,#0f766e 70%);display:grid;place-items:center;box-shadow:0 2px 6px rgba(15,118,110,.35)}
+.mark svg{width:19px;height:19px}
+.brand b{font:800 18px/1 var(--display);letter-spacing:-.02em;display:block}
+.brand small{font:500 12.5px/1.3 var(--sans);color:var(--muted);display:block;margin-top:3px}
+.desk-nav{display:none;margin-left:auto;gap:2px;padding:4px;background:var(--tile);border-radius:12px}
+.desk-nav a{padding:8px 15px;border-radius:9px;text-decoration:none;color:var(--ink-2);font:600 14px/1 var(--sans);transition:background .15s,color .15s}
+.desk-nav a:hover{color:var(--ink)}
+.desk-nav a.on{background:var(--surface);color:var(--primary);box-shadow:var(--shadow-sm)}
+@media (min-width:900px){.desk-nav{display:flex}}
+
+/* bottom tab bar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--glass);-webkit-backdrop-filter:saturate(180%) blur(14px);backdrop-filter:saturate(180%) blur(14px);border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+.tabbar-in{display:grid;grid-template-columns:repeat(5,1fr)}
+.tabbar a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px 8px;text-decoration:none;color:var(--muted);font:600 11.5px/1 var(--sans)}
+.tabbar a svg{width:20px;height:20px;box-sizing:content-box;padding:4px 16px;border-radius:999px;transition:background .15s}
+.tabbar a.on{color:var(--primary)}
+.tabbar a.on svg{background:var(--primary-soft)}
+@media (min-width:900px){.tabbar{display:none}}
+main{padding-block:24px 104px}
+@media (min-width:900px){main{padding-block:36px 56px}}
+
+/* shared pieces */
+.view{display:grid;gap:20px}
+.page-head{display:grid;gap:10px;padding-bottom:4px;justify-items:start}
+.page-head .label{display:inline-flex;align-items:center;gap:7px;background:var(--primary-soft);color:var(--primary);padding:5px 12px;border-radius:999px;font-size:12.5px}
+.page-head .label::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.page-head h1{font-size:clamp(28px,4.2vw,44px);line-height:1.1;letter-spacing:-.035em;font-weight:800}
+.page-head p{max-width:62ch;font-size:16.5px;color:var(--ink-2)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);min-width:0}
+.panel-h{display:flex;justify-content:space-between;align-items:center;gap:8px 12px;flex-wrap:wrap;padding:16px 18px 0}
+.panel-h h2,.panel-h h3{font:700 16.5px/1.3 var(--display);letter-spacing:-.015em;color:var(--ink)}
+.panel-b{padding:14px 18px 18px;display:grid;gap:16px;min-width:0}
+.tag{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font:600 12.5px/1.25 var(--sans);background:var(--tile);color:var(--ink-2);white-space:nowrap}
+.tag.good,.tag.warn,.tag.bad{padding-left:9px}
+.tag.good::before,.tag.warn::before,.tag.bad::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.tag.good{background:var(--primary-soft);color:var(--primary)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.tag.bad{background:var(--bad-soft);color:var(--bad)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:8px 16px;border:1px solid var(--line-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm);font:600 14px/1.2 var(--sans);cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s,box-shadow .15s}
+.btn:hover{background:var(--tile)}
+.btn.primary{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.btn.primary:hover{background:var(--primary-hover);border-color:var(--primary-hover)}
+.btn.danger{border-color:var(--bad-line);color:var(--bad)}
+.btn.danger:hover{background:var(--bad-soft)}
+.btn.ghost{border-color:transparent;box-shadow:none;color:var(--primary);padding-inline:10px}
+.btn.ghost:hover{background:var(--primary-soft)}
+.btn.sm{min-height:34px;padding:5px 12px;font-size:13px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.metrics.four{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:640px){.metrics.four{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.metric{background:var(--tile);border-radius:12px;padding:12px 14px;display:grid;gap:3px;align-content:start;min-width:0}
+#au-stats .metric{background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);padding:16px 18px}
+.metric .v{font:800 clamp(22px,2.6vw,28px)/1.15 var(--display);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.metric .v small{font:500 12px/1 var(--sans);letter-spacing:0;color:var(--muted);margin-left:3px}
+.metric .n{font:500 12.5px/1.4 var(--sans)}
+.tone-bad{color:var(--bad)} .tone-warn{color:var(--warn)} .tone-good{color:var(--primary)}
+.note{background:var(--tile);border-radius:12px;padding:12px 14px;color:var(--ink-2);font-size:14.5px}
+.note b{color:var(--ink)}
+.list{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.list li{display:grid;grid-template-columns:16px 1fr;gap:6px}
+.list li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--primary);margin-top:.62em}
+.list.risk li::before{background:var(--bad)}
+.list b{color:var(--ink)}
+
+/* analyze */
+.an-grid{display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:1000px){.an-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr);align-items:start}.an-left{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px)}}
+.an-left,.an-right{display:grid;gap:20px;min-width:0}
+.drop{border:1.5px dashed var(--line-strong);border-radius:12px;background:var(--tile);padding:24px 16px;display:grid;justify-items:center;text-align:center;gap:6px;cursor:pointer;transition:border-color .15s,background .15s}
+.drop:hover,.drop.over{border-color:var(--primary);background:var(--primary-soft)}
+.drop strong{font:700 16px/1.3 var(--display)}
+.drop svg{width:22px;height:22px;box-sizing:content-box;padding:11px;border-radius:50%;background:var(--surface);color:var(--primary);box-shadow:var(--shadow-sm);margin-bottom:4px}
+.seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;background:var(--tile);border-radius:11px}
+@media (min-width:520px){.seg{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.seg button{border:0;border-radius:8px;background:transparent;padding:8px 6px;font:600 13.5px/1.2 var(--sans);color:var(--ink-2);cursor:pointer;transition:background .15s,color .15s}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--primary);box-shadow:var(--shadow-sm),0 0 0 1px var(--line)}
+.file-line{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between;font-size:14px}
+.try{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:13.5px;color:var(--muted)}
+.photo-frame{position:relative;border-radius:12px;overflow:hidden;background:var(--tile);line-height:0}
+.photo-frame canvas{display:block;width:100%;height:auto;max-width:100%}
+.bx{position:absolute;border:2px solid;border-radius:6px;line-height:1.2;pointer-events:none;box-shadow:0 0 0 1px rgba(255,255,255,.35)}
+.bx.bad{border-color:#e5484d}.bx.warn{border-color:#f59e0b}.bx.good{border-color:#14b8a6}
+.bx span{position:absolute;left:-2px;bottom:100%;margin-bottom:4px;font:600 11.5px/1.3 var(--sans);padding:3px 7px;border-radius:6px;background:#0f172a;color:#fff;max-width:240px;white-space:normal;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.bx.bad span{background:#d93a3f}.bx.warn span{background:#b86a05}.bx.good span{background:#0f766e}
+.bx.below span{bottom:auto;top:100%;margin:4px 0 0}
+@media (max-width:560px){.bx span{font-size:9.5px;padding:1px 5px;max-width:120px}}
+.ramp{height:10px;border-radius:999px;background:linear-gradient(90deg,#2563eb,#14b8a6 35%,#facc15 60%,#f97316 80%,#dc2626)}
+.ramp-l{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:4px}
+.err{border:1px solid var(--bad-line);background:var(--bad-soft);border-radius:12px;padding:12px 14px;color:var(--bad);font-size:14px}
+.err b{display:block}
+.err p{color:var(--ink-2);margin-top:4px}
+.asset-title{display:grid;gap:6px}
+.asset-title h2{font-size:clamp(21px,2.6vw,27px);letter-spacing:-.025em;line-height:1.15;font-weight:800}
+.meta{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13.5px;color:var(--muted)}
+.two{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:640px){.two{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.spec{border:1px solid var(--line);border-radius:12px;overflow:hidden;display:grid;align-content:start}
+.spec.after{border:1.5px solid var(--primary);box-shadow:0 0 0 4px var(--primary-ring)}
+.spec-h{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:8px 12px;background:var(--tile)}
+.spec.after .spec-h{background:var(--primary-soft)}
+.spec.after .spec-h .label{color:var(--primary)}
+.spec-b{padding:12px;display:grid;gap:8px}
+.spec-b h4{font-size:17px;line-height:1.25;letter-spacing:-.015em}
+.spec-b p{font-size:14px;color:var(--ink-2)}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--line);padding-top:10px;gap:8px}
+.kv .v{font:800 22px/1.15 var(--display);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.bench{display:grid;gap:14px}
+.bench-row{display:grid;gap:5px}
+.bench-top{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.bar{height:8px;border-radius:999px;background:var(--tile-2);position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;display:block;border-radius:999px}
+.bar.now i{background:var(--line-strong)}
+.bar.aft i{background:var(--primary)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--line-strong)}
+.legend span.aft::before{background:var(--primary)}
+.score-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.score-big{font:800 46px/1 var(--display);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.score-big small{font:500 16px var(--sans);color:var(--muted);letter-spacing:0}
+.grade{border-radius:14px;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;min-width:72px;padding:8px 12px;text-align:center}
+.grade b{font:800 28px/1 var(--display)}
+.grade small{font:600 12px/1.3 var(--sans)}
+.grade.warn{background:var(--warn-soft);color:var(--warn)}
+.grade.bad{background:var(--bad-soft);color:var(--bad)}
+.crit{display:grid;gap:12px}
+.crit-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;align-items:end;font-size:14px}
+.crit-row .bar{grid-column:1/-1}
+.crit-row .bar i{background:var(--primary)}
+.crit-row .bar i.warn{background:#e8a33a}
+.crit-row .bar i.bad{background:var(--bad)}
+.callout{border:1px solid var(--bad-line);background:var(--bad-soft);border-radius:12px;padding:14px 16px;display:grid;gap:6px}
+.callout.good{border-color:var(--good-line);background:var(--primary-soft)}
+.callout h4{font:700 16px/1.3 var(--display);color:var(--bad)}
+.callout.good h4{color:var(--primary)}
+.callout p{color:var(--ink-2);font-size:14.5px}
+.fixes{display:grid;gap:10px}
+.fix{position:relative;display:grid;gap:6px;padding:14px 16px 14px 22px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.fix::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--line-strong)}
+.fix.p-high::before{background:var(--bad)}.fix.p-medium::before{background:#e8a33a}.fix.p-low::before{background:var(--primary)}
+.fix-top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.fix h4{font-size:16.5px;line-height:1.3;letter-spacing:-.01em}
+.fix p{font-size:14.5px;color:var(--ink-2)}
+textarea.out{width:100%;min-height:140px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);padding:10px;font:13px/1.5 var(--mono);resize:vertical}
+
+/* gatekeeper */
+.gate{border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:12px;background:var(--surface)}
+.gate-h{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.gate-title{font:700 15px/1.3 var(--display)}
+.gate-steps{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.gate-steps li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;align-items:start}
+.gs-icon{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 12px/1 var(--sans);background:var(--tile);color:var(--muted)}
+.gs-icon svg{width:13px;height:13px}
+li.pass .gs-icon{background:var(--primary-soft);color:var(--primary)}
+li.warn .gs-icon{background:var(--warn-soft);color:var(--warn)}
+li.fail .gs-icon{background:var(--bad-soft);color:var(--bad)}
+li.run .gs-icon{background:transparent;border:2.5px solid var(--primary-ring);border-top-color:var(--primary)}
+@media (prefers-reduced-motion:no-preference){li.run .gs-icon{animation:spin .8s linear infinite}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gs-text b{display:block;font-weight:600;font-size:14px;line-height:1.4}
+.gs-text span{display:block;font-size:13px;color:var(--muted);line-height:1.45}
+li.fail .gs-text span{color:var(--bad)}
+.verdict{border-radius:10px;padding:12px 14px;display:grid;gap:10px;font-size:14px}
+.verdict.pass{background:var(--primary-soft);color:var(--ink-2)}
+.verdict.warn{background:var(--warn-soft);color:var(--ink-2)}
+.verdict.fail{background:var(--bad-soft);color:var(--ink-2)}
+.verdict b{color:var(--ink)}
+
+/* audits */
+.au-grid{display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:1000px){.au-grid{grid-template-columns:minmax(0,8fr) minmax(0,4fr);align-items:start}.au-side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px)}}
+.au-list,.au-side{display:grid;gap:16px;min-width:0}
+.tools{display:grid;gap:12px}
+.search{display:flex;align-items:center;gap:8px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);box-shadow:var(--shadow-sm);padding-left:12px;transition:border-color .15s,box-shadow .15s}
+.search::before{content:"";width:15px;height:15px;flex:none;border:2px solid var(--muted);border-radius:50%;box-sizing:border-box;-webkit-mask:none}
+.search input{flex:1;min-width:0;border:0;background:transparent;padding:10px 12px 10px 0;outline:none}
+.search:focus-within{border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-ring)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);border-radius:999px;background:var(--surface);padding:6px 12px;font:600 13px/1.2 var(--sans);color:var(--ink-2);cursor:pointer;transition:background .15s}
+.chip:hover{background:var(--tile)}
+.chip[aria-pressed="true"]{background:var(--primary-soft);color:var(--primary);border-color:var(--good-line)}
+.chip.flag{color:var(--bad);border-color:var(--bad-line)}
+.chip.flag[aria-pressed="true"]{background:var(--bad-soft);color:var(--bad);border-color:var(--bad-line)}
+.tools-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+select{border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);padding:7px 10px;font-size:14px}
+.rec .finding{font-size:14.5px;color:var(--ink-2)}
+.rec-foot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:12px}
+.chk{display:inline-flex;align-items:center;gap:8px;font:600 14px/1 var(--sans);cursor:pointer}
+.chk input{appearance:none;width:17px;height:17px;border:1.5px solid var(--line-strong);border-radius:5px;background:var(--surface);margin:0;display:grid;place-items:center;cursor:pointer}
+.chk input:checked{background:var(--primary);border-color:var(--primary)}
+.chk input:checked::after{content:"";width:8px;height:4px;border-left:2px solid var(--on-primary);border-bottom:2px solid var(--on-primary);transform:rotate(-45deg) translate(1px,-1px)}
+.empty{padding:32px 16px;text-align:center;color:var(--muted);border:1.5px dashed var(--line-strong);border-radius:14px}
+.cmp{width:100%;border-collapse:collapse;font-size:14px}
+.cmp th,.cmp td{padding:8px 8px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
+.cmp th:first-child,.cmp td:first-child{text-align:left}
+.cmp thead th{font:600 12.5px/1.2 var(--sans);color:var(--muted);border-bottom-color:var(--line-strong)}
+
+/* cases / library / ethics */
+.cards{display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:720px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.case{overflow:hidden}
+.case canvas{display:block;width:100%;height:auto}
+.case .panel-b p{color:var(--ink-2);font-size:14.5px}
+.lib dl{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin:0}
+.lib dt{font:600 13px/1.3 var(--sans);color:var(--muted);margin-bottom:2px}
+.lib dd{margin:0;font-size:14.5px;color:var(--ink-2)}
+.lib .big{font:800 21px/1.2 var(--display);color:var(--primary);letter-spacing:-.02em;background:var(--primary-soft);border-radius:10px;padding:10px 12px}
+.prose{display:grid;gap:12px;max-width:72ch;color:var(--ink-2)}
+.prose b{color:var(--ink)}
+.wt-table{width:100%;border-collapse:collapse;font-size:14.5px}
+.wt-table th,.wt-table td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+.wt-table tr:last-child td{border-bottom:0}
+.wt-table th{font:600 12.5px/1.2 var(--sans);color:var(--muted);background:var(--tile)}
+.wt-table td.w{text-align:right;font-weight:700;white-space:nowrap}
+.table-wrap{overflow-x:auto}
+#crit-table{margin-top:12px}
+.formula{font:500 13.5px/1.7 var(--mono);background:var(--tile);border-radius:10px;padding:12px 14px;overflow-x:auto;white-space:pre}
+.foot{border-top:1px solid var(--line);margin-top:12px;padding-top:16px;font-size:13px;color:var(--muted);max-width:80ch}
+.toast{position:fixed;z-index:40;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--surface);border-radius:12px;box-shadow:var(--shadow-lg);padding:10px 16px;font:600 14px/1.3 var(--sans);max-width:calc(100vw - 32px)}
+@media (min-width:900px){.toast{bottom:28px}}
+@media (prefers-reduced-motion:no-preference){.view{animation:in .22s ease-out}@keyframes in{from{transform:translateY(6px)}to{transform:none}}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#analyze" aria-label="HeatShield home">
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5z"/><circle cx="12" cy="11" r="3"/><path d="M12 5v2M12 15v2M7 11h2M15 11h2"/></svg></span>
+      <span><b>HeatShield</b><small>Heat checks for public streets</small></span>
+    </a>
+    <nav class="desk-nav" aria-label="Main">
+      <a href="#analyze" data-nav="analyze">Analyze</a>
+      <a href="#audits" data-nav="audits">Audits</a>
+      <a href="#cases" data-nav="cases">Examples</a>
+      <a href="#library" data-nav="library">Fixes</a>
+      <a href="#ethics" data-nav="ethics">Ethics</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+  <!-- ANALYZE -->
+  <section class="view" data-view="analyze">
+    <div class="page-head">
+      <span class="label">Check a place</span>
+      <h1>How hot does this place get, and who pays for it?</h1>
+      <p>Add a photo of a road, bus shelter, roof or tree-lined street. HeatShield shows where it soaks up the sun, who is most exposed, and which fixes would cool it down.</p>
+    </div>
+    <div class="an-grid">
+      <div class="an-left">
+        <div class="panel">
+          <div class="panel-h"><h2>1. Add a photo</h2><span class="label">JPG, PNG or WEBP · 25 MB max</span></div>
+          <div class="panel-b">
+            <label class="drop" id="drop" for="file">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 16v4h16v-4M12 3v13M7 8l5-5 5 5"/></svg>
+              <strong>Choose a photo</strong>
+              <span class="muted">or drag it here. We check it first, and it never leaves your device.</span>
+            </label>
+            <input type="file" id="file" class="sr" accept="image/jpeg,image/png,image/webp">
+            <div class="try"><span>See the photo check in action:</span>
+              <button type="button" class="btn ghost sm" id="try-street">Try a street photo</button>
+              <button type="button" class="btn ghost sm" id="try-selfie">Try a selfie</button>
+            </div>
+            <div id="upload-err" hidden></div>
+            <div class="gate" id="gate" hidden aria-live="polite">
+              <div class="gate-h"><span class="gate-title">Photo check</span><span class="tag" id="gate-tag">Checking</span></div>
+              <ol class="gate-steps" id="gate-steps"></ol>
+              <div id="gate-verdict"></div>
+            </div>
+            <div class="file-line">
+              <span id="file-name" class="num"></span>
+              <button class="btn sm" id="back-sample" type="button" hidden>Use sample photo</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><h2>2. What does it show?</h2><span class="label" id="type-hint">Sample photo</span></div>
+          <div class="panel-b">
+            <div class="seg" id="types" role="group" aria-label="Asset type">
+              <button type="button" data-type="road">Road</button>
+              <button type="button" data-type="shelter">Bus shelter</button>
+              <button type="button" data-type="roof">Roof</button>
+              <button type="button" data-type="canopy">Street trees</button>
+            </div>
+            <p class="muted" style="font-size:14px" id="type-help">Tap a type to see its sample photo.</p>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-h">
+            <h2>Photo</h2>
+            <div class="seg" id="views" role="group" aria-label="Photo view" style="grid-template-columns:repeat(2,auto)">
+              <button type="button" data-v="photo" aria-pressed="true" style="padding:6px 10px;border-bottom:0;margin:0">Photo</button>
+              <button type="button" data-v="absorb" aria-pressed="false" style="padding:6px 10px;border-bottom:0;margin:0;border-right:0">Sun absorption</button>
+            </div>
+          </div>
+          <div class="panel-b">
+            <div class="photo-frame" id="frame"><canvas id="photo" width="960" height="600" aria-label="Photo being analyzed"></canvas></div>
+            <div id="absorb-legend" hidden>
+              <div class="ramp"></div>
+              <div class="ramp-l"><span>Light: bounces sun away</span><span>Dark: soaks sun up</span></div>
+              <p class="muted" style="font-size:13.5px;margin-top:6px">Darker surfaces usually soak up more sunlight, so they show as red. This is a brightness map, not a thermometer.</p>
+            </div>
+            <p class="muted" style="font-size:13.5px" id="box-note">The boxes point out what we noticed. They only appear on sample photos.</p>
+          </div>
+        </div>
+      </div>
+      <div class="an-right" id="results"></div>
+    </div>
+  </section>
+
+  <!-- AUDITS -->
+  <section class="view" data-view="audits" hidden>
+    <div class="page-head">
+      <span class="label">Past checks</span>
+      <h1>Every site we've checked</h1>
+      <p>Past audits for heat-exposed public places in Los Angeles. Filter by type, flag the ones that need action, or pick two to compare side by side.</p>
+    </div>
+    <div class="metrics four" id="au-stats"></div>
+    <div class="au-grid">
+      <div class="au-list">
+        <div class="tools">
+          <div class="search"><label for="q" class="sr">Search audits</label><input id="q" type="search" placeholder="Search by reference, place or finding"></div>
+          <div class="chips" id="au-chips"></div>
+          <div class="tools-row">
+            <span class="muted num" id="au-count" style="font-size:14px"></span>
+            <label class="label" style="display:flex;gap:8px;align-items:center">Sort <select id="au-sort">
+              <option value="new">Newest first</option><option value="old">Oldest first</option>
+              <option value="ethics">Lowest ethics score</option><option value="hot">Hottest surface</option>
+            </select></label>
+          </div>
+        </div>
+        <div id="au-items" class="au-list"></div>
+      </div>
+      <aside class="au-side">
+        <div class="panel">
+          <div class="panel-h"><h2>Compare two places</h2><span class="tag" id="cmp-n">0 of 2</span></div>
+          <div class="panel-b" id="cmp"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><h2>About these checks</h2></div>
+          <div class="panel-b"><p style="font-size:14.5px;color:var(--ink-2)">For each place we note how hot the ground got, how well it copes with heat, and how fairly the heat falls on the people who use it. Anything you save from the Analyze page shows up here too. It's kept in your browser only.</p></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- CASES -->
+  <section class="view" data-view="cases" hidden>
+    <div class="page-head">
+      <span class="label">Worked examples</span>
+      <h1>Four places, four kinds of heat problem</h1>
+      <p>Each example walks through one type of public space, from what the photo shows to the fixes we'd recommend. Open one to see the full analysis.</p>
+    </div>
+    <div class="cards" id="case-list"></div>
+  </section>
+
+  <!-- LIBRARY -->
+  <section class="view" data-view="library" hidden>
+    <div class="page-head">
+      <span class="label">Cooling fixes</span>
+      <h1>Ways to cool a street</h1>
+      <p>The cooling methods HeatShield recommends, with typical results, rough cost and what can go wrong. Figures are typical ranges from published studies. Real results depend on the site, the climate and how well the work is maintained.</p>
+    </div>
+    <div class="cards" id="lib-list"></div>
+  </section>
+
+  <!-- ETHICS -->
+  <section class="view" data-view="ethics" hidden>
+    <div class="page-head">
+      <span class="label">How we score</span>
+      <h1>The ethics score, explained</h1>
+      <p>Heat doesn't fall on everyone equally. The people waiting at bus stops, walking to school or working outside take the most of it. The ethics score asks whether a design protects those people, not only whether it lowers a temperature.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><h2>Six criteria</h2><span class="label">Weights add up to 100%</span></div>
+      <div class="table-wrap"><table class="wt-table" id="crit-table"></table></div>
+    </div>
+    <div class="two">
+      <div class="panel">
+        <div class="panel-h"><h2>Working out the score</h2></div>
+        <div class="panel-b">
+          <p style="font-size:14.5px;color:var(--ink-2)">Each criterion gets a score out of 100. We multiply each by its weight and add them up.</p>
+          <div class="formula">score = 0.25 × safety + 0.15 × access
+      + 0.20 × environment + 0.15 × cost
+      + 0.15 × equity + 0.10 × vulnerable</div>
+          <div class="table-wrap"><table class="wt-table"><thead><tr><th>Score</th><th>Grade</th><th>Meaning</th></tr></thead><tbody>
+            <tr><td class="num">90 to 100</td><td>A</td><td>Protects people well. Keep it maintained.</td></tr>
+            <tr><td class="num">75 to 89</td><td>B</td><td>Good, with a few gaps to close.</td></tr>
+            <tr><td class="num">60 to 74</td><td>C</td><td>Works for some people and leaves others exposed.</td></tr>
+            <tr><td class="num">45 to 59</td><td>D</td><td>Needs changes before it's acceptable.</td></tr>
+            <tr><td class="num">Below 45</td><td>F</td><td>Puts people at risk. Act now.</td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h2>Standards we draw on</h2></div>
+        <div class="panel-b">
+          <ul class="list">
+            <li><span><b>ASCE Code of Ethics.</b> Engineers put the safety, health and welfare of the public first.</span></li>
+            <li><span><b>IEEE 7000-2021.</b> A process for spotting ethical concerns early in system design and building them into the requirements.</span></li>
+            <li><span><b>ASTM E1980.</b> How to calculate the solar reflectance index (SRI) of a surface.</span></li>
+            <li><span><b>ISO 14040/44.</b> How to compare the environmental impact of materials over their whole life.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="panel rule-warn">
+      <div class="panel-h"><h2>What this tool can't do</h2></div>
+      <div class="panel-b prose">
+        <p>HeatShield is a student capstone project. It is <b>not</b> a stamped engineering assessment, and nothing here should go into a permit or a contract without review by a licensed engineer.</p>
+        <ul class="list">
+          <li><span>It doesn't measure temperature. The sun absorption view is based on how bright each part of your photo is, which is only a rough guide to how much sun a surface absorbs.</span></li>
+          <li><span>The photo check can tell an outdoor place from a selfie or an indoor shot, but it can't tell a road from a roof. You pick the type, and we show our worked example for it.</span></li>
+          <li><span>We don't analyze photos of people. If someone fills most of the frame, the photo is turned away.</span></li>
+          <li><span>The audit records and examples are demonstration data for Los Angeles sites.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">HeatShield is a student capstone project built on IEEE 7000 and the ASCE Code of Ethics. The places and numbers here are examples. Please don't use them in place of a licensed engineer's assessment.</p>
+</main>
+
+<nav class="tabbar" aria-label="Main">
+  <div class="tabbar-in">
+    <a href="#analyze" data-nav="analyze"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Analyze</a>
+    <a href="#audits" data-nav="audits"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Audits</a>
+    <a href="#cases" data-nav="cases"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-6h6v6"/></svg>Examples</a>
+    <a href="#library" data-nav="library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4zM20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z"/></svg>Fixes</a>
+    <a href="#ethics" data-nav="ethics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0zM8 21h8"/></svg>Ethics</a>
+  </div>
+</nav>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- data ---------- */
+const CRITERIA=[
+  {k:"safety",name:"Public safety and heat injury prevention",w:25,q:"Does it lower the chance that someone gets heat exhaustion or heat stroke here?"},
+  {k:"access",name:"Accessibility and inclusion",w:15,q:"Can wheelchair users, parents with strollers and people with low vision use it comfortably?"},
+  {k:"environment",name:"Environmental sustainability",w:20,q:"Does it cut energy use, emissions and stormwater problems over its life?"},
+  {k:"cost",name:"Lifecycle cost and affordability",w:15,q:"Can the city afford to build it and keep it working for 20 years?"},
+  {k:"equity",name:"Social equity and fair distribution",w:15,q:"Do the neighborhoods with the least shade today get help first?"},
+  {k:"vulnerable",name:"Protection of vulnerable people",w:10,q:"Does it protect older adults, children, outdoor workers and people without housing?"}
+];
+const TYPES={
+ road:{label:"Road",ref:"ARTERIAL-094",kind:"Road",status:"bad",statusText:"Needs action",
+  place:"Downtown commerce and transit corridor",coords:"34.0522°N, 118.2437°W",date:"2025-05-18 14:32",
+  summary:"A four-lane asphalt road with bare sidewalks and a busy bus stop. No trees and no shade.",
+  metrics:[["Surface temp","58.4","°C","+19.6°C above air","bad"],["Solar reflectance","8","SRI","Absorbs most sun","bad"],["Heat resilience","24","/100","Critical","bad"]],
+  seen:["Dark asphalt with small cracks from age and sun.","Four traffic lanes, 14.8 m curb to curb, with no planted buffer.","Concrete sidewalks 1.8 m wide with no tree cover."],
+  risks:[["Holds heat after dark","The asphalt keeps releasing heat after sunset, so nights here stay about 6°C warmer."],["Hot for people walking","Heat coming off the road pushes the radiant temperature people feel on the sidewalk above 64°C."],["Warm runoff","Hot water from the road drains straight into storm drains."]],
+  now:{name:"Standard dense-graded asphalt",note:"PG 64-22 binder. Holds heat and reflects almost no sunlight.",score:41,a:["Solar reflectance","8 SRI"],b:["Peak surface temp","58.4°C"]},
+  after:{name:"Cool pavement coating with planted curb strips",note:"Light-colored polymer slurry with titanium dioxide, plus planted strips at the curb that soak up runoff.",score:84,a:["Solar reflectance","72 SRI"],b:["Surface temp change","−11.2°C"]},
+  bench:[["Heat resilience",24,88],["Comfort for people walking",18,82],["Environmental impact",32,91],["Lifecycle cost",85,68]],
+  tradeoff:"A reflective coating cools the road by about 11°C, but it can bounce glare and heat onto people walking beside it when there are no trees. Use a matte finish with good skid resistance (above 65 BPN) and plant enough trees to shade about 35% of the main walking routes.",
+  criteria:[86,74,88,64,80,79],
+  equity:{title:"Bus riders carry the heat",text:"Route 42 stops here, and a bus comes about every 22 minutes. People waiting have nowhere to stand in the shade, while drivers pass in air-conditioned cars. The people with the fewest options take the most heat."},
+  action:"Build shade at every boarding area: a canopy at least 2.4 m deep, with misting or another passive cooling feature.",
+  fixes:[{p:"high",phase:"Phase 1",lead:"About 30 days",title:"Apply a cool pavement coating",text:"Coat all four lanes with a 1.5 mm reflective slurry. Expected surface cooling: 9.8 to 12.4°C."},
+         {p:"medium",phase:"Phase 2",lead:"About 90 days",title:"Plant street trees on the north sidewalk",text:"Plant 14 London plane trees in structural soil trenches. Once grown, they should shade about 60% of the sidewalk."},
+         {p:"low",phase:"Phase 3",lead:"Every year",title:"Check grip and reflectance",text:"Test skid resistance every year, and recoat when reflectance drops after heavy traffic."}],
+  boxes:[{x:.33,y:.62,w:.34,h:.3,t:"Asphalt: reflects about 8% of sun",c:"bad"},{x:.6,y:.08,w:.36,h:.26,t:"No shade: full sun, about 980 W/m²",c:"warn",below:true},{x:.01,y:.72,w:.13,h:.26,t:"Sidewalk: no tree cover",c:"bad"}]},
+ shelter:{label:"Bus shelter",ref:"SHELTER-028",kind:"Shelter",status:"bad",statusText:"Needs action",
+  place:"Exposition Boulevard transit connector",coords:"34.0195°N, 118.2891°W",date:"2025-05-16 11:15",
+  summary:"A bus shelter with a dark metal roof that heats the people underneath it. Riders wait a long time and there's no water nearby.",
+  metrics:[["Heat under roof","49.2","°C","Severe discomfort","bad"],["Shaded area","14","%","86% in full sun","bad"],["Heat resilience","31","/100","Below standard","bad"]],
+  seen:["Corrugated zinc roof, dark and uninsulated.","Open sides. The roof only covers the bench.","No drinking fountain, fan or misting nearby."],
+  risks:[["The roof radiates heat down","The metal roof reaches about 49°C and radiates heat onto the people sitting under it."],["Shade misses most riders","Only 14% of the waiting area is in shade during the afternoon."],["Long waits in the heat","Buses come about every 38 minutes, which is long enough for older riders to develop heat illness."]],
+  now:{name:"Dark corrugated metal roof",note:"Uninsulated zinc sheet. Heats up fast and radiates that heat downward.",score:35,a:["Shaded waiting area","14%"],b:["Heat under roof","49.2°C"]},
+  after:{name:"Insulated light roof with west screens",note:"White insulated roof panel, perforated screens on the west side, and a drinking fountain.",score:81,a:["Shaded waiting area","70%"],b:["Heat under roof change","−12.5°C"]},
+  bench:[["Heat resilience",31,85],["Comfort for people waiting",22,80],["Environmental impact",45,72],["Lifecycle cost",90,70]],
+  tradeoff:"Side screens block the low afternoon sun, but they can trap still air and make the stop harder to see from passing buses and the street. Put perforated screens on the west side only and keep the front open so riders can see and be seen.",
+  criteria:[84,82,70,72,85,90],
+  equity:{title:"Older riders are most exposed",text:"This stop serves a senior housing building. Waits average 38 minutes, and there's no water or cool place nearby. Older adults are the most likely to get heat stroke, and they have the fewest other ways to travel."},
+  action:"Replace the roof this season and add a drinking fountain. Post live arrival times so riders can wait indoors until the bus is close.",
+  fixes:[{p:"high",phase:"Phase 1",lead:"About 45 days",title:"Replace the roof with an insulated light panel",text:"Swap the zinc sheet for a white insulated panel. Expected cooling under the roof: about 12°C."},
+         {p:"medium",phase:"Phase 2",lead:"About 90 days",title:"Add west screens and a drinking fountain",text:"Install perforated screens on the west side and connect a fountain to the nearby water main."},
+         {p:"low",phase:"Phase 3",lead:"Every summer",title:"Check comfort on the hottest days",text:"Measure the temperature at the bench on the three hottest days each year and adjust the design if it's still too hot."}],
+  boxes:[{x:.22,y:.24,w:.56,h:.13,t:"Dark metal roof: about 49°C",c:"bad"},{x:.27,y:.5,w:.46,h:.3,t:"Waiting area: 14% shaded",c:"warn",below:true}]},
+ roof:{label:"Roof",ref:"ROOF-104",kind:"Roof",status:"good",statusText:"Doing well",
+  place:"Central Public Library, retrofitted roof",coords:"34.0488°N, 118.2518°W",date:"2025-05-12 09:40",
+  summary:"A library roof that was resurfaced with a white reflective membrane. It now stays close to air temperature on hot afternoons.",
+  metrics:[["Surface temp","32.1","°C","29.9°C cooler than before","good"],["Solar reflectance","88","SRI","Reflects most sun","good"],["Heat resilience","92","/100","Meets target","good"]],
+  seen:["Bright white roof membrane (80 mil TPO), clean and intact.","Rooftop cooling units on raised curbs.","Parapet edge with light-colored flashing."],
+  risks:[["Reflectance fades with dirt","White roofs lose some reflectance as dust builds up, usually in the first few years."],["Glare onto taller neighbors","Reflected sunlight can reach the windows of taller buildings next door."],["Little help at street level","The roof cools the building, but people on the sidewalk below get no direct shade from it."]],
+  now:{name:"Previous dark gravel roof",note:"Built-up roof of gravel and tar. Absorbed most of the sun.",score:38,a:["Solar reflectance","12 SRI"],b:["Peak surface temp","62.0°C"]},
+  after:{name:"White TPO membrane (installed)",note:"80 mil thermoplastic polyolefin membrane, installed in 2025.",score:91,a:["Solar reflectance","88 SRI"],b:["Surface temp change","−29.9°C"]},
+  bench:[["Heat resilience",30,92],["Comfort for people inside",40,85],["Environmental impact",35,88],["Lifecycle cost",70,80]],
+  tradeoff:"The new roof cut the building's cooling electricity by about 28% and stopped the plume of warm air that drifted over the park next door. It needs washing every year or two to keep reflecting well.",
+  criteria:[95,88,93,84,86,90],
+  equity:{title:"A cooling center that stays cool",text:"The library is a public cooling center on heat-warning days. A cooler roof keeps the reading rooms comfortable for people without air conditioning at home, without overloading the building's cooling system.",good:true},
+  action:"Keep the library on the cooling-center list and publish its opening hours whenever a heat warning is issued.",
+  fixes:[{p:"low",phase:"Upkeep",lead:"Every 18 months",title:"Wash the roof",text:"A low-pressure wash removes dust and keeps reflectance above 80 SRI."},
+         {p:"medium",phase:"Next step",lead:"About 120 days",title:"Shade the entrance plaza",text:"Plant four shade trees in the plaza so people queuing on cooling-center days have shade."},
+         {p:"low",phase:"Upkeep",lead:"Every 2 years",title:"Measure reflectance",text:"Take reflectance readings at six points on the roof to catch wear early."}],
+  boxes:[{x:.1,y:.12,w:.48,h:.42,t:"White membrane: SRI 88",c:"good",below:true},{x:.66,y:.16,w:.24,h:.3,t:"Cooling units: 28% less load",c:"good",below:true}]},
+ canopy:{label:"Street trees",ref:"CANOPY-017",kind:"Canopy",status:"warn",statusText:"Keep an eye on it",
+  place:"Vermont Avenue residential block",coords:"34.0736°N, 118.2915°W",date:"2025-05-07 15:05",
+  summary:"A residential street with good trees on one end and a long bare stretch on the other, right next to an elementary school.",
+  metrics:[["Sidewalk in sun","47.5","°C","In shade: 33°C","warn"],["Canopy cover","22","%","Target: 40%","warn"],["Heat resilience","56","/100","Needs work","warn"]],
+  seen:["Mature street trees on the south half of the block.","A 40 m stretch with no trees, next to an elementary school.","Narrow planting strip (1.2 m) with hard, compacted soil."],
+  risks:[["Shade gap on the walk to school","Children cross the 40 m gap during afternoon pickup, the hottest part of the day."],["Trees under stress","Compacted soil and little water mean the existing trees grow slowly and drop leaves early in heat waves."],["Uneven shade","The north end of the block, with more rental housing, has about half the tree cover of the south end."]],
+  now:{name:"Patchy canopy, compacted soil",note:"22% canopy cover. Bare planting strip with no irrigation.",score:46,a:["Canopy cover","22%"],b:["Sidewalk in sun","47.5°C"]},
+  after:{name:"Fill the gaps with trees in soil cells",note:"12 new trees in structural soil cells with drip irrigation.",score:82,a:["Canopy cover in 10 years","45%"],b:["Sidewalk temp change","−11.0°C"]},
+  bench:[["Heat resilience",56,84],["Comfort for people walking",40,86],["Environmental impact",60,90],["Lifecycle cost",75,62]],
+  tradeoff:"Trees cool people on foot better than any coating, but they take 10 to 15 years to reach full size and need regular water for the first three years. Put a shade sail at the school gate to cover the years in between.",
+  criteria:[82,78,92,66,88,90],
+  equity:{title:"The north end gets less shade",text:"Tree cover on this block follows income. The north end, with more renters and a school, has half the shade of the south end. Planting evenly would repeat that gap. Planting the north end first closes it."},
+  action:"Plant the north end first and fund watering for three years, so the part of the block with the least shade gets help first.",
+  fixes:[{p:"high",phase:"Phase 1",lead:"About 30 days",title:"Put up a shade sail at the school gate",text:"A temporary sail shades the pickup area while the new trees grow."},
+         {p:"medium",phase:"Phase 2",lead:"November to February",title:"Plant 12 trees in soil cells",text:"Plant during the cool season, in structural soil cells that give roots room to grow under the sidewalk."},
+         {p:"low",phase:"Phase 3",lead:"Weekly in summer, for 3 years",title:"Water and prune",text:"Young trees need about 60 liters a week in summer. Assign the watering to a named crew or a neighborhood group."}],
+  boxes:[{x:.02,y:.04,w:.4,h:.34,t:"Mature canopy: shaded sidewalk",c:"good",below:true},{x:.5,y:.3,w:.46,h:.6,t:"Gap: 40 m with no shade",c:"warn"}]}
+};
+const TYPE_ORDER=["road","shelter","roof","canopy"];
+const BASE_AUDITS=[
+ {ref:"ARTERIAL-094",type:"road",status:"bad",date:"2025-05-18 14:32",coords:"34.0522°N, 118.2437°W",place:"Downtown commerce and transit corridor",temp:58.4,delta:19.6,res:24,eth:41,reviewed:true,finding:"Wide asphalt road with no trees or planted buffer. It traps heat around a busy bus stop. A cool pavement coating is scheduled for June 2025.",preset:"road"},
+ {ref:"SHELTER-028",type:"shelter",status:"bad",date:"2025-05-16 11:15",coords:"34.0195°N, 118.2891°W",place:"Exposition Boulevard transit connector",temp:49.2,delta:14.0,res:31,eth:35,reviewed:true,finding:"Dark, uninsulated zinc roof radiates heat onto the bench. Riders wait about 38 minutes with no water nearby. Roof replacement required.",preset:"shelter"},
+ {ref:"ROOF-104",type:"roof",status:"good",date:"2025-05-12 09:40",coords:"34.0488°N, 118.2518°W",place:"Central Public Library, retrofitted roof",temp:32.1,delta:-29.9,res:92,eth:91,reviewed:true,reviewer:"Signed off by Dr. S. Patel, PE",finding:"New white membrane cut the building's cooling electricity by 28.4% and removed the warm air plume over the park next door.",preset:"roof"},
+ {ref:"ARTERIAL-071",type:"road",status:"warn",date:"2025-05-09 13:50",coords:"34.0181°N, 118.2826°W",place:"Figueroa Street at Exposition Park",temp:52.1,delta:14.3,res:48,eth:63,reviewed:true,finding:"The 2023 cool pavement pilot has worn away in the wheel paths. Reflectance has dropped from 34 to 21 SRI. Recoat in October."},
+ {ref:"CANOPY-017",type:"canopy",status:"warn",date:"2025-05-07 15:05",coords:"34.0736°N, 118.2915°W",place:"Vermont Avenue residential block",temp:47.5,delta:9.4,res:56,eth:46,reviewed:false,finding:"A 40 m gap in the tree canopy beside an elementary school. The north end of the block has half the shade of the south end.",preset:"canopy"},
+ {ref:"SHELTER-033",type:"shelter",status:"good",date:"2025-05-03 14:10",coords:"34.0907°N, 118.2917°W",place:"Vermont and Santa Monica Metro stop",temp:36.4,delta:2.1,res:81,eth:84,reviewed:true,finding:"Insulated white roof and a large tree to the west keep 70% of the waiting area shaded at 3 pm."},
+ {ref:"ROOF-089",type:"roof",status:"warn",date:"2025-04-27 12:25",coords:"34.0336°N, 118.2087°W",place:"Boyle Heights community center",temp:44.9,delta:9.8,res:61,eth:70,reviewed:false,finding:"The 2019 cool roof coating is dirty and peeling near the drains. Reflectance is down to 54 SRI. Clean it and recoat the damaged areas."},
+ {ref:"CANOPY-022",type:"canopy",status:"bad",date:"2025-04-20 15:40",coords:"33.9891°N, 118.2740°W",place:"Slauson Avenue, Main Street to Broadway",temp:55.0,delta:16.8,res:29,eth:38,reviewed:false,finding:"Only 6% tree cover along 600 m of shops. Bus riders and street vendors wait in full sun all afternoon."}
+];
+const LIBRARY=[
+ {name:"Cool pavement coating",cat:"Roads",cool:"5 to 11°C cooler surface",cost:"$$",life:"Recoat every 5 to 7 years",best:"Wide roads, parking lots and schoolyards in full sun.",watch:"Reflected sunlight can make people walking beside it feel hotter. Pair it with shade, and use a matte finish so it doesn't glare or get slippery."},
+ {name:"Cool roof membrane or coating",cat:"Roofs",cool:"Up to 30°C cooler roof",cost:"$$",life:"Wash every 1 to 2 years; 15 to 25 year life",best:"Low-rise public buildings, schools and cooling centers.",watch:"Reflectance drops as dirt builds up. In cold climates it can slightly raise winter heating needs."},
+ {name:"Street trees",cat:"Trees",cool:"11 to 25°C cooler surfaces in shade",cost:"$",life:"10 to 15 years to grow; water for the first 3",best:"Sidewalks, school routes, bus stops and parking strips.",watch:"Needs root space, water and someone responsible for care. Plant where shade is lowest first, or the gap between neighborhoods grows."},
+ {name:"Shade structures",cat:"Shelters",cool:"10 to 15°C less radiant heat on people",cost:"$$$",life:"Works on day one; 20+ years",best:"Bus stops, playgrounds and places where trees can't grow.",watch:"A dark or thin metal roof heats up and radiates heat down. Use light, insulated or planted roofs."},
+ {name:"Planted swales and permeable paving",cat:"Water",cool:"1 to 3°C cooler air nearby",cost:"$$",life:"Clear sediment every year",best:"Curb edges, medians and parking lots with stormwater problems.",watch:"The cooling effect is modest. The main benefit is handling stormwater and supporting nearby trees."},
+ {name:"Drinking water and misting",cat:"Shelters",cool:"Comfort for people, not surfaces",cost:"$",life:"Check weekly in summer",best:"Long-wait bus stops, parks and outdoor work sites.",watch:"Misting works poorly in humid weather and uses water. Fountains need regular cleaning to stay safe."}
+];
+
+/* ---------- helpers ---------- */
+function weighted(scores){return Math.round(scores.reduce((s,v,i)=>s+v*CRITERIA[i].w/100,0))}
+function grade(s){return s>=90?"A":s>=75?"B":s>=60?"C":s>=45?"D":"F"}
+function toneFor(s){return s>=75?"good":s>=55?"warn":"bad"}
+function statusLabel(s){return s==="bad"?"Needs action":s==="warn"?"Keep an eye on it":"Doing well"}
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function fmtDate(d){const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(d||"");return m?(+m[3])+" "+MONTHS[+m[2]-1]+" "+m[1]:esc(d)}
+let toastT;function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2600)}
+function store(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k)||"null");localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
+async function copy(text,fallbackEl){
+  try{await navigator.clipboard.writeText(text);toast("Copied to clipboard");}
+  catch(e){if(fallbackEl){fallbackEl.hidden=false;fallbackEl.value=text;fallbackEl.focus();fallbackEl.select();toast("Select the text and copy it");}}
+}
+
+/* ---------- scenes (drawn, so the page works offline) ---------- */
+function rng(seed){return()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646}}
+function speckle(ctx,x,y,w,h,n,cols,r){for(let i=0;i<n;i++){ctx.fillStyle=cols[i%cols.length];ctx.fillRect(x+r()*w,y+r()*h,1+r()*2,1+r()*2)}}
+function sky(ctx,W,H,h){const g=ctx.createLinearGradient(0,0,0,H*h);g.addColorStop(0,"#9cc4e4");g.addColorStop(1,"#e9eef0");ctx.fillStyle=g;ctx.fillRect(0,0,W,H*h)}
+function tree(ctx,x,y,s,r){ctx.fillStyle="#5b4632";ctx.fillRect(x-s*.06,y,s*.12,s*.9);for(let i=0;i<9;i++){ctx.fillStyle=["#2f6b3a","#3c7d44","#275a31","#4a8c4f"][i%4];ctx.beginPath();ctx.arc(x+(r()-.5)*s*1.1,y-(r())*s*.6,s*(.32+r()*.25),0,7);ctx.fill()}}
+function drawScene(type,c,W=960,H=600){
+  c.width=W;c.height=H;const ctx=c.getContext("2d");const r=rng(type.length*977+13);
+  if(type==="road"){
+    sky(ctx,W,H,.42);
+    for(let i=0;i<9;i++){const bw=60+r()*90,bh=60+r()*140,bx=i*W/9+r()*20;ctx.fillStyle=["#b9b2a6","#a7a29a","#c9c2b5","#9a968f"][i%4];ctx.fillRect(bx,H*.4-bh,bw,bh)}
+    ctx.fillStyle="#c8c4bc";ctx.fillRect(0,H*.4,W,H*.6);
+    speckle(ctx,0,H*.4,W,H*.6,2500,["#bab6ae","#d6d2ca"],r);
+    ctx.fillStyle="#353638";ctx.beginPath();ctx.moveTo(W*.44,H*.4);ctx.lineTo(W*.56,H*.4);ctx.lineTo(W*.93,H);ctx.lineTo(W*.07,H);ctx.closePath();ctx.fill();
+    speckle(ctx,W*.1,H*.42,W*.8,H*.58,7000,["#2a2b2d","#47484a","#3d3e40"],r);
+    ctx.strokeStyle="#e9e3c8";ctx.lineWidth=3;
+    [.25,.5,.75].forEach(f=>{const x0=W*.44+W*.12*f,x1=W*.07+W*.86*f;for(let t=0;t<1;t+=.1){const a=t*t,b=Math.min(1,(t+.05)*(t+.05));ctx.beginPath();ctx.moveTo(x0+(x1-x0)*a,H*.4+H*.6*a);ctx.lineTo(x0+(x1-x0)*b,H*.4+H*.6*b);ctx.stroke()}});
+    ctx.fillStyle="#fff7d6";ctx.beginPath();ctx.arc(W*.86,H*.1,26,0,7);ctx.fill();
+  }else if(type==="shelter"){
+    sky(ctx,W,H,.5);
+    ctx.fillStyle="#c5bfb3";ctx.fillRect(0,H*.08,W*.18,H*.42);ctx.fillRect(W*.84,H*.14,W*.16,H*.36);
+    ctx.fillStyle="#d3cec5";ctx.fillRect(0,H*.5,W,H*.36);speckle(ctx,0,H*.5,W,H*.36,2500,["#c3beb5","#dfdad1"],r);
+    ctx.fillStyle="#3a3b3d";ctx.fillRect(0,H*.86,W,H*.14);speckle(ctx,0,H*.86,W,H*.14,1500,["#2e2f31","#4a4b4d"],r);
+    ctx.fillStyle="#b8b2a8";ctx.beginPath();ctx.moveTo(W*.3,H*.62);ctx.lineTo(W*.62,H*.62);ctx.lineTo(W*.58,H*.7);ctx.lineTo(W*.34,H*.7);ctx.fill();
+    ctx.fillStyle="#4b4f56";[.26,.74].forEach(f=>ctx.fillRect(W*f-5,H*.35,10,H*.38));
+    ctx.fillStyle="#2a2d33";ctx.fillRect(W*.24,H*.28,W*.52,H*.07);
+    ctx.strokeStyle="#3c4048";ctx.lineWidth=2;for(let x=W*.24;x<W*.76;x+=12){ctx.beginPath();ctx.moveTo(x,H*.28);ctx.lineTo(x,H*.35);ctx.stroke()}
+    ctx.fillStyle="#6b5a48";ctx.fillRect(W*.36,H*.6,W*.28,H*.035);ctx.fillStyle="#4b4f56";ctx.fillRect(W*.38,H*.635,6,H*.06);ctx.fillRect(W*.62-6,H*.635,6,H*.06);
+    ctx.fillStyle="#0f766e";ctx.fillRect(W*.8,H*.3,W*.03,H*.05);ctx.fillStyle="#4b4f56";ctx.fillRect(W*.812,H*.35,4,H*.38);
+    ctx.fillStyle="#fff7d6";ctx.beginPath();ctx.arc(W*.12,H*.09,24,0,7);ctx.fill();
+  }else if(type==="roof"){
+    ctx.fillStyle="#4d5a4e";ctx.fillRect(0,0,W,H);speckle(ctx,0,0,W,H,3000,["#435046","#5a675a"],r);
+    for(let i=0;i<10;i++)tree(ctx,r()*W,(i%2?H*.92:H*.05)+r()*20,50+r()*20,r);
+    ctx.fillStyle="#a7aaa8";ctx.fillRect(W*.05,H*.06,W*.9,H*.84);
+    ctx.fillStyle="#eef2f3";ctx.fillRect(W*.07,H*.09,W*.86,H*.78);
+    ctx.strokeStyle="#d9e0e3";ctx.lineWidth=2;for(let x=W*.07;x<W*.93;x+=58){ctx.beginPath();ctx.moveTo(x,H*.09);ctx.lineTo(x,H*.87);ctx.stroke()}
+    ctx.fillStyle="#b7bdc1";[[.68,.2],[.79,.2],[.68,.34]].forEach(([x,y])=>{ctx.fillRect(W*x,H*y,W*.09,H*.1)});
+    ctx.fillStyle="#8d959a";[[.68,.2],[.79,.2],[.68,.34]].forEach(([x,y])=>{ctx.beginPath();ctx.arc(W*(x+.045),H*(y+.05),18,0,7);ctx.fill()});
+    ctx.fillStyle="#c9cfd2";ctx.fillRect(W*.2,H*.66,W*.12,H*.12);ctx.fillRect(W*.6,H*.62,W*.06,H*.08);
+  }else{
+    sky(ctx,W,H,.35);
+    ctx.fillStyle="#c8bda9";ctx.fillRect(0,H*.08,W*.3,H*.3);ctx.fillStyle="#b9ad98";ctx.fillRect(W*.55,H*.12,W*.45,H*.26);
+    ctx.fillStyle="#cdc8bf";ctx.fillRect(0,H*.35,W,H*.65);speckle(ctx,0,H*.35,W,H*.65,3000,["#bfbab1","#dcd7ce"],r);
+    ctx.fillStyle="#7d6a52";ctx.fillRect(0,H*.6,W,H*.06);
+    ctx.fillStyle="#38393b";ctx.beginPath();ctx.moveTo(0,H*.8);ctx.lineTo(W,H*.72);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.fill();
+    ctx.fillStyle="rgba(40,50,45,.35)";ctx.beginPath();ctx.ellipse(W*.2,H*.52,W*.22,H*.09,0,0,7);ctx.fill();
+    for(let i=0;i<3;i++)tree(ctx,W*(.06+i*.14),H*.28,90,r);
+    tree(ctx,W*.96,H*.3,60,r);
+    ctx.fillStyle="#d97706";ctx.fillRect(W*.62,H*.4,W*.2,H*.012);ctx.fillStyle="#7c2d12";ctx.font="600 16px monospace";ctx.fillText("SCHOOL",W*.66,H*.395);
+  }
+}
+
+/* ---------- analyze ---------- */
+const S={type:"road",source:"sample",file:"sample-road.png",view:"photo",stats:null,gate:null};
+const base=document.createElement("canvas");let absorb=null;
+function stats(c){
+  const w=160,h=Math.max(1,Math.round(c.height*160/c.width));const t=document.createElement("canvas");t.width=w;t.height=h;
+  const x=t.getContext("2d");x.drawImage(c,0,0,w,h);const d=x.getImageData(0,0,w,h).data;let sum=0,dark=0,green=0,n=w*h;
+  for(let i=0;i<d.length;i+=4){const R=d[i],G=d[i+1],B=d[i+2];const l=(.2126*R+.7152*G+.0722*B)/255;sum+=l;if(l<.3)dark++;if(G>R+8&&G>B+8&&G>45)green++}
+  return{mean:sum/n,dark:dark/n,green:green/n};
+}
+function makeAbsorb(){
+  const c=document.createElement("canvas");c.width=base.width;c.height=base.height;const x=c.getContext("2d");x.drawImage(base,0,0);
+  const im=x.getImageData(0,0,c.width,c.height),d=im.data;
+  const stops=[[0,[37,99,235]],[.35,[20,184,166]],[.6,[250,204,21]],[.8,[249,115,22]],[1,[220,38,38]]];
+  for(let i=0;i<d.length;i+=4){const t=1-(.2126*d[i]+.7152*d[i+1]+.0722*d[i+2])/255;let k=1;while(k<stops.length-1&&t>stops[k][0])k++;
+    const [a,ca]=stops[k-1],[b,cb]=stops[k],f=(t-a)/(b-a||1);for(let j=0;j<3;j++)d[i+j]=ca[j]+(cb[j]-ca[j])*Math.min(1,Math.max(0,f))}
+  x.putImageData(im,0,0);return c;
+}
+function paint(){
+  const c=$("#photo");c.width=base.width;c.height=base.height;const x=c.getContext("2d");
+  if(S.view==="absorb"){absorb=absorb||makeAbsorb();x.drawImage(absorb,0,0)}else x.drawImage(base,0,0);
+  $$(".bx",$("#frame")).forEach(b=>b.remove());
+  if(S.source==="sample")TYPES[S.type].boxes.forEach(b=>{const el=document.createElement("div");el.className="bx "+b.c+(b.below?" below":"");
+    Object.assign(el.style,{left:b.x*100+"%",top:b.y*100+"%",width:b.w*100+"%",height:b.h*100+"%"});el.innerHTML="<span>"+esc(b.t)+"</span>";$("#frame").appendChild(el)});
+  $("#absorb-legend").hidden=S.view!=="absorb";
+  $("#box-note").textContent=S.source==="sample"?"The boxes point out what we noticed. They only appear on sample photos.":"We only draw boxes on sample photos, so yours is shown just as you took it.";
+  $$("#views button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.view));
+}
+function loadSample(type){$("#gate").hidden=true;S.gate=null;S.type=type;S.source="sample";S.file="sample-"+type+".png";drawScene(type,base);absorb=null;S.stats=stats(base);refresh()}
+function refresh(){
+  paint();
+  $$("#types button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.type===S.type));
+  $("#file-name").textContent=S.source==="sample"?"You're looking at our sample "+TYPES[S.type].label.toLowerCase()+" photo.":"Your photo: "+S.file;
+  $("#back-sample").hidden=S.source==="sample";
+  $("#type-hint").textContent=S.source==="sample"?"Sample photo":"Your photo";
+  $("#type-help").textContent=S.source==="sample"?"Tap a type to see its sample photo.":"Pick the closest match. We'll show our example for that kind of place.";
+  renderResults();
+}
+function showErr(title,msg){const e=$("#upload-err");e.hidden=false;e.className="err";e.innerHTML="<b>"+esc(title)+"</b><p>"+esc(msg)+"</p>"}
+
+/* ---------- gatekeeper: is this an outdoor public space, and not a person? ---------- */
+const TF_URL="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js";
+const COCO_URL="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js";
+const OUTDOOR=["car","bus","truck","traffic light","stop sign","fire hydrant","parking meter","bench","bicycle","motorcycle","train","boat","bird","umbrella","potted plant"];
+const INDOOR=["couch","bed","dining table","tv","laptop","toilet","refrigerator","oven","sink","microwave","keyboard","mouse","remote","book","clock","vase","cell phone","teddy bear","hair drier","toothbrush","wine glass","cup"];
+let detP=null;
+function loadScript(src){return new Promise((res,rej)=>{const el=document.createElement("script");el.src=src;el.crossOrigin="anonymous";el.onload=res;el.onerror=()=>rej(new Error("blocked"));document.head.appendChild(el)})}
+function getDetector(){
+  if(!detP)detP=(async()=>{try{if(!window.tf)await loadScript(TF_URL);if(!window.cocoSsd)await loadScript(COCO_URL);return await window.cocoSsd.load({base:"lite_mobilenet_v2"})}catch(e){return null}})();
+  return Promise.race([detP,new Promise(r=>setTimeout(()=>r(null),30000))]);
+}
+function gateStats(c){
+  const w=160,h=Math.max(1,Math.round(c.height*160/c.width));const t=document.createElement("canvas");t.width=w;t.height=h;
+  const x=t.getContext("2d");x.drawImage(c,0,0,w,h);const d=x.getImageData(0,0,w,h).data;
+  let sky=0,skyN=0,ground=0,groundN=0,green=0,skin=0,skinN=0;
+  for(let y=0;y<h;y++)for(let i=0;i<w;i++){const k=(y*w+i)*4,R=d[k],G=d[k+1],B=d[k+2];
+    const mx=Math.max(R,G,B),mn=Math.min(R,G,B),sat=mx?(mx-mn)/mx:0,l=(.2126*R+.7152*G+.0722*B)/255;
+    if(y<h/3){skyN++;if((B>R+12&&B>=G&&B>110)||(l>.78&&sat<.12))sky++}
+    if(y>=h/2){groundN++;if(sat<.16&&l>.1&&l<.86)ground++}
+    if(G>R+8&&G>B+8&&G>45)green++;
+    if(i>w*.25&&i<w*.75&&y>h*.2&&y<h*.8){skinN++;if(R>95&&G>40&&B>20&&mx-mn>15&&Math.abs(R-G)>15&&R>G&&R>B)skin++}
+  }
+  return{sky:sky/skyN,ground:ground/groundN,green:green/(w*h),skin:skin/skinN};
+}
+const ICON={pass:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m3 8.5 3.2 3L13 4.5"/></svg>',
+  fail:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m4 4 8 8M12 4l-8 8"/></svg>',warn:"!",wait:"",run:""};
+const GATE_STEPS=["File type and size","Photo opens correctly","No close-up of a person","Looks like an outdoor public space"];
+let gateRun=0;
+function gateSet(i,state,detail){const li=$$("#gate-steps li")[i];li.className=state;li.querySelector(".gs-icon").innerHTML=ICON[state]||String(i+1);li.querySelector(".gs-text span").textContent=detail||""}
+function gateVerdict(kind,title,text,actions){
+  const tag=$("#gate-tag");tag.className="tag "+(kind==="pass"?"good":kind==="warn"?"warn":"bad");tag.textContent=kind==="pass"?"Passed":kind==="warn"?"Not sure":"Turned away";
+  $("#gate-verdict").innerHTML=`<div class="verdict ${kind}"><div><b>${esc(title)}</b> ${esc(text)}</div>${actions?`<div class="btn-row">${actions}</div>`:""}</div>`;
+}
+const listWords=a=>a.length<2?a.join(""):a.slice(0,-1).join(", ")+" and "+a[a.length-1];
+function photoToCanvas(f){return new Promise((res,rej)=>{const rd=new FileReader();rd.onerror=rej;rd.onload=()=>{const img=new Image();img.onload=()=>res(img);img.onerror=rej;img.src=rd.result};rd.readAsDataURL(f)})}
+async function runGate(file,demo){
+  const run=++gateRun;$("#upload-err").hidden=true;
+  const g=$("#gate");g.hidden=false;$("#gate-verdict").innerHTML="";
+  $("#gate-tag").className="tag";$("#gate-tag").textContent="Checking";
+  $("#gate-steps").innerHTML=GATE_STEPS.map((t,i)=>`<li class="wait"><span class="gs-icon">${i+1}</span><span class="gs-text"><b>${t}</b><span></span></span></li>`).join("");
+  const again=`<label class="btn primary sm" for="file">Choose another photo</label>`;
+  const name=demo?demo.name:file.name;
+  // 1. type and size
+  if(demo)gateSet(0,"pass","Sample image");
+  else if(!/^image\/(jpeg|png|webp)$/.test(file.type)){gateSet(0,"fail","This file isn't a JPG, PNG or WEBP photo.");return gateVerdict("fail","We can't use this file.","Please choose a JPG, PNG or WEBP photo.",again)}
+  else if(file.size>25*1024*1024){gateSet(0,"fail",`It's ${(file.size/1048576).toFixed(1)} MB. The limit is 25 MB.`);return gateVerdict("fail","That photo is too large.","Try a smaller copy, under 25 MB.",again)}
+  else gateSet(0,"pass",`${file.type.split("/")[1].toUpperCase()}, ${(file.size/1048576).toFixed(1)} MB`);
+  // 2. decode
+  gateSet(1,"run","Opening the photo");
+  const tmp=document.createElement("canvas");
+  try{
+    const src=demo?demo.canvas:await photoToCanvas(file);
+    const sw=src.width,sh=src.height;
+    if(Math.min(sw,sh)<200){gateSet(1,"fail",`It's only ${sw} × ${sh} pixels.`);return gateVerdict("fail","That photo is too small to check.","Use one that's at least 200 pixels on each side.",again)}
+    const sc=Math.min(1,1200/Math.max(sw,sh));tmp.width=Math.round(sw*sc);tmp.height=Math.round(sh*sc);tmp.getContext("2d").drawImage(src,0,0,tmp.width,tmp.height);
+    gateSet(1,"pass",`${sw} × ${sh} pixels`);
+  }catch(e){gateSet(1,"fail","The file may be damaged.");return gateVerdict("fail","We couldn't open that photo.","Try exporting it again as a JPG.",again)}
+  if(run!==gateRun)return;
+  // 3 + 4. people and place
+  const hs=gateStats(tmp);
+  gateSet(2,"run",detP?"Looking for people":"Loading the object detector. The first time takes a few seconds.");gateSet(3,"run","Looking for sky, paving, plants and street objects");
+  const model=await getDetector();let det=null;
+  if(model){try{det=await model.detect(tmp,20,.45)}catch(e){det=null}}
+  if(run!==gateRun)return;
+  const area=tmp.width*tmp.height;
+  const people=det?det.filter(d=>d.class==="person"):[];
+  const personFrac=people.reduce((m,d)=>Math.max(m,d.bbox[2]*d.bbox[3]/area),0);
+  const labels=det?[...new Set(det.map(d=>d.class))]:[];
+  const outdoor=labels.filter(l=>OUTDOOR.includes(l)),indoor=labels.filter(l=>INDOOR.includes(l));
+  const skinPortrait=hs.skin>.3&&hs.ground<.25;
+  let verdict="pass",hard=false;
+  if(personFrac>.25){gateSet(2,"fail",`A person fills about ${Math.round(personFrac*100)}% of the photo.`);verdict="fail";hard=true}
+  else if(skinPortrait){gateSet(2,"fail",`Skin-like colors fill ${Math.round(hs.skin*100)}% of the middle of the photo. That usually means a close-up of a person.`);verdict="fail"}
+  else gateSet(2,"pass",people.length?`${people.length} ${people.length===1?"person":"people"} in the scene, none in close-up`:det?"No people in close-up":"No close-up found (checked by color, the detector didn't load)");
+  const an=w=>(/^[aeiou]/.test(w)?"an ":"a ")+w;
+  const seen=[];if(hs.sky>.08)seen.push("sky");if(hs.ground>.25)seen.push("paved ground");if(hs.green>.12)seen.push("greenery");seen.push(...outdoor.map(o=>o==="potted plant"?"a planter":an(o)));
+  if(verdict==="fail")gateSet(3,"wait","Skipped, because of the step above.");
+  else if(indoor.length&&!outdoor.length&&hs.sky<.08){gateSet(3,"fail",`This looks like an indoor photo. We spotted ${listWords(indoor.map(an))}.`);if(verdict==="pass")verdict="fail"}
+  else if(seen.length)gateSet(3,"pass","We saw "+listWords(seen)+".");
+  else{gateSet(3,"warn","We couldn't find sky, paving, plants or street objects.");if(verdict==="pass")verdict="warn"}
+  const commit=()=>{base.width=tmp.width;base.height=tmp.height;base.getContext("2d").drawImage(tmp,0,0);absorb=null;
+    S.source="upload";S.file=name;S.stats=stats(base);if(S.stats.green>.25)S.type="canopy";
+    S.gate=verdict==="pass"?"passed"+(seen.length?", we saw "+listWords(seen):""):"you chose to continue after a warning";refresh();toast("Photo checked and added")};
+  if(verdict==="pass"){gateVerdict("pass","Looks good.","This photo shows an outdoor place. Your results are ready.");commit();return}
+  if(hard)return gateVerdict("fail","We don't analyze photos of people.","HeatShield looks at places, not people. Take a photo of the street, roof or trees, with nobody filling the frame.",again);
+  const cont=`<button type="button" class="btn sm" id="gate-go">It's a public space, continue</button>`;
+  if(verdict==="fail")gateVerdict("fail","This doesn't look like a public space.","HeatShield works with photos of roads, bus stops, roofs and street trees. If we got it wrong, you can continue anyway.",again+cont);
+  else gateVerdict("warn","We're not sure what this shows.","It might be very close up, or taken at night. You can continue, but the results may not mean much.",again+cont);
+  $("#gate-go").onclick=()=>{if(run!==gateRun)return;verdict="override";commit();gateVerdict("warn","Continuing with your photo.","Keep in mind the check had doubts about it.")};
+}
+function loadFile(f){if(f)runGate(f,null)}
+function drawSelfie(c){
+  const W=800,H=900;c.width=W;c.height=H;const x=c.getContext("2d");
+  const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"#9bbdb8");g.addColorStop(1,"#6f9690");x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.fillStyle="#7c8c6a";x.fillRect(W*.72,H*.12,W*.2,H*.3);x.fillStyle="#e9e4d6";x.fillRect(W*.74,H*.14,W*.16,H*.26);
+  x.fillStyle="#24324d";x.beginPath();x.ellipse(W/2,H*1.02,W*.46,H*.3,0,0,7);x.fill();
+  x.fillStyle="#d79f62";x.fillRect(W*.43,H*.6,W*.14,H*.14);
+  x.fillStyle="#3b2416";x.beginPath();x.ellipse(W/2,H*.34,W*.25,H*.25,0,0,7);x.fill();
+  x.fillStyle="#e0ac69";x.beginPath();x.ellipse(W/2,H*.42,W*.2,H*.24,0,0,7);x.fill();
+  x.fillStyle="#3b2416";x.beginPath();x.ellipse(W/2,H*.23,W*.21,H*.08,0,0,7);x.fill();
+  x.fillStyle="#2a1a10";[.42,.58].forEach(f=>{x.beginPath();x.ellipse(W*f,H*.4,10,7,0,0,7);x.fill()});
+  x.strokeStyle="#9a5a3a";x.lineWidth=6;x.beginPath();x.arc(W/2,H*.47,46,.2*Math.PI,.8*Math.PI);x.stroke();
+}
+function estTemp(st){const a=Math.min(.9,Math.max(.03,st.mean*.85));return{a,t:35+25*(1-a)}}
+function renderResults(){
+  const T=TYPES[S.type],st=S.stats,est=estTemp(st),score=weighted(T.criteria),g=grade(score),gt=toneFor(score);
+  const pct=v=>Math.round(v*100);
+  const fromPhoto=`
+  <div class="panel">
+    <div class="panel-h"><h2>What we found in ${S.source==="sample"?"the sample":"your"} photo</h2><span class="tag">${S.source==="sample"?"Sample":"Your photo"}</span></div>
+    <div class="panel-b">
+      <div class="metrics">
+        <div class="metric"><span class="label">Brightness</span><span class="v num">${pct(st.mean)}<small>%</small></span><span class="n muted">How light the photo is overall</span></div>
+        <div class="metric"><span class="label">Dark surfaces</span><span class="v num ${st.dark>.35?"tone-bad":st.dark>.15?"tone-warn":"tone-good"}">${pct(st.dark)}<small>%</small></span><span class="n muted">These soak up the most sun</span></div>
+        <div class="metric"><span class="label">Greenery</span><span class="v num ${st.green>.25?"tone-good":st.green>.08?"tone-warn":"tone-bad"}">${pct(st.green)}<small>%</small></span><span class="n muted">Trees, grass and plants</span></div>
+      </div>
+      ${S.source==="upload"&&S.gate?`<p class="muted" style="font-size:13.5px">Photo check: ${esc(S.gate)}</p>`:""}
+      <p class="note">On a 35°C afternoon in full sun, surfaces like these could reach about <b class="num">${est.t.toFixed(1)}°C</b>. That's a rough guess based only on how light or dark the photo is. The numbers below come from measurements at a real place like this one.</p>
+    </div>
+  </div>`;
+  const head=`
+  <div class="panel rule-${T.status}">
+    <div class="panel-h"><h2>Example: ${esc(T.label.toLowerCase())}</h2><span class="tag ${T.status}">${esc(T.statusText)}</span></div>
+    <div class="panel-b">
+      <div class="asset-title"><h2>${esc(T.place)}</h2>
+        <div class="meta num"><span>Checked ${fmtDate(T.date)}</span><span>${esc(T.coords)}</span><span>Ref. ${esc(T.ref)}</span></div></div>
+      <p style="color:var(--ink-2)">${esc(T.summary)}</p>
+      <div class="metrics">${T.metrics.map(m=>`<div class="metric"><span class="label">${esc(m[0])}</span><span class="v num tone-${m[4]}">${esc(m[1])}<small>${esc(m[2])}</small></span><span class="n tone-${m[4]}">${esc(m[3])}</span></div>`).join("")}</div>
+      <div class="two">
+        <div><div class="label" style="margin-bottom:8px">What we noticed</div><ul class="list">${T.seen.map(s=>`<li><span>${esc(s)}</span></li>`).join("")}</ul></div>
+        <div><div class="label" style="margin-bottom:8px;color:var(--bad)">Why it gets so hot</div><ul class="list risk">${T.risks.map(r=>`<li><span><b>${esc(r[0])}.</b> ${esc(r[1])}</span></li>`).join("")}</ul></div>
+      </div>
+    </div>
+  </div>`;
+  const spec=(o,after)=>`<div class="spec ${after?"after":""}"><div class="spec-h"><span class="label">${after?"After the fix":"Now"}</span><span class="label num">Score ${o.score}/100</span></div>
+    <div class="spec-b"><h4>${esc(o.name)}</h4><p>${esc(o.note)}</p><div class="kv"><div><div class="label">${esc(o.a[0])}</div><div class="v">${esc(o.a[1])}</div></div><div><div class="label">${esc(o.b[0])}</div><div class="v ${after?"tone-good":""}">${esc(o.b[1])}</div></div></div></div></div>`;
+  const cmp=`
+  <div class="panel">
+    <div class="panel-h"><h2>Now, and after the fix</h2></div>
+    <div class="panel-b">
+      <div class="two">${spec(T.now,false)}${spec(T.after,true)}</div>
+      <div class="bench">
+        <div class="legend"><span>Now</span><span class="aft">After the fix</span></div>
+        ${T.bench.map(b=>`<div class="bench-row"><div class="bench-top"><span>${esc(b[0])}</span><span class="num muted">${b[1]} → <b style="color:var(--ink)">${b[2]}</b>/100</span></div>
+          <div class="bar now"><i style="width:${b[1]}%"></i></div><div class="bar aft"><i style="width:${b[2]}%"></i></div></div>`).join("")}
+      </div>
+      <p class="note"><b>One thing to keep in mind.</b> ${esc(T.tradeoff)}</p>
+    </div>
+  </div>`;
+  const eth=`
+  <div class="panel">
+    <div class="panel-h"><h2>Is the fix fair to everyone?</h2><a class="label" href="#ethics" style="color:var(--primary)">How we score this</a></div>
+    <div class="panel-b">
+      <div class="score-top"><div><div class="label">Overall score</div><div class="score-big num">${score}<small> / 100</small></div></div>
+        <div class="grade ${gt==="good"?"":gt}"><b>${g}</b><small>Grade</small></div></div>
+      <div class="crit">${CRITERIA.map((c,i)=>{const v=T.criteria[i],tn=v>=75?"":v>=60?"warn":"bad";return`<div class="crit-row"><span>${esc(c.name)} <span class="muted">(${c.w}%)</span></span><b class="num">${v}</b><div class="bar"><i class="${tn}" style="width:${v}%"></i></div></div>`}).join("")}</div>
+      <div class="callout ${T.equity.good?"good":""}"><h4>${esc(T.equity.title)}</h4><p>${esc(T.equity.text)}</p></div>
+      <div class="callout good"><h4>What we recommend</h4><p>${esc(T.action)}</p></div>
+    </div>
+  </div>`;
+  const fixes=`
+  <div class="panel">
+    <div class="panel-h"><h2>What to do first</h2><span class="tag">${T.fixes.length} steps</span></div>
+    <div class="panel-b"><div class="fixes">${T.fixes.map(f=>`<div class="fix p-${f.p}"><div class="fix-top"><span class="label">${esc(f.phase)} · ${f.p==="high"?"Do this first":f.p==="medium"?"Do this next":"Keep it up"}</span><span class="label num">${esc(f.lead)}</span></div><h4>${esc(f.title)}</h4><p>${esc(f.text)}</p></div>`).join("")}</div></div>
+  </div>`;
+  const exp=`
+  <div class="panel">
+    <div class="panel-h"><h2>Save and share</h2></div>
+    <div class="panel-b">
+      <div class="btn-row">
+        <button class="btn primary" type="button" id="save-audit">Save to my checks</button>
+        <button class="btn" type="button" id="copy-sum">Copy summary</button>
+        <button class="btn" type="button" id="copy-json">Copy as JSON</button>
+      </div>
+      <textarea class="out" id="out" readonly hidden aria-label="Exported text"></textarea>
+    </div>
+  </div>`;
+  $("#results").innerHTML=fromPhoto+head+cmp+eth+fixes+exp;
+  $("#save-audit").onclick=saveAudit;
+  $("#copy-sum").onclick=()=>copy(summaryText(),$("#out"));
+  $("#copy-json").onclick=()=>copy(JSON.stringify(reportObj(),null,2),$("#out"));
+}
+function reportObj(){const T=TYPES[S.type],est=estTemp(S.stats);return{tool:"HeatShield (student demo)",created:new Date().toISOString(),photo:S.source==="sample"?"sample":S.file,assetType:T.label,exampleSite:{ref:T.ref,place:T.place,coords:T.coords},
+  measuredFromPhoto:{brightnessPct:Math.round(S.stats.mean*100),darkSurfacePct:Math.round(S.stats.dark*100),greeneryPct:Math.round(S.stats.green*100),roughSurfaceTempC:+est.t.toFixed(1)},
+  proposedFix:T.after.name,ethicsScore:weighted(T.criteria),grade:grade(weighted(T.criteria)),criteria:Object.fromEntries(CRITERIA.map((c,i)=>[c.k,T.criteria[i]])),fixes:T.fixes.map(f=>f.title)}}
+function summaryText(){const T=TYPES[S.type],o=reportObj();return `HeatShield summary (${T.label})
+Example site: ${T.place} (${T.ref})
+${T.summary}
+From the photo: ${o.measuredFromPhoto.darkSurfacePct}% dark surfaces, ${o.measuredFromPhoto.greeneryPct}% greenery, rough surface estimate ${o.measuredFromPhoto.roughSurfaceTempC}°C.
+Proposed fix: ${T.after.name}. Ethics score ${o.ethicsScore}/100 (${o.grade}).
+Main concern: ${T.equity.title}. ${T.equity.text}
+Next steps:
+${T.fixes.map((f,i)=>`${i+1}. ${f.title} (${f.lead})`).join("\n")}
+Student demo. Not a stamped engineering assessment.`}
+function saveAudit(){
+  const T=TYPES[S.type],est=estTemp(S.stats),saved=store("hs-saved")||[];const now=new Date();
+  const n=saved.length+1;const ref="MY-"+T.kind.toUpperCase()+"-"+String(n).padStart(2,"0");
+  const temp=+est.t.toFixed(1),res=Math.max(5,Math.min(95,Math.round(100-S.stats.dark*100*.9+S.stats.green*40)));
+  saved.unshift({ref,type:S.type,status:res<40?"bad":res<70?"warn":"good",date:now.toISOString().slice(0,16).replace("T"," "),coords:"Location not recorded",
+    place:S.source==="sample"?"Sample photo: "+T.label.toLowerCase():"Your photo: "+S.file,temp,delta:+(temp-35).toFixed(1),res,eth:weighted(T.criteria),reviewed:false,
+    finding:`${Math.round(S.stats.dark*100)}% dark surfaces and ${Math.round(S.stats.green*100)}% greenery in the photo. Suggested fix: ${T.after.name.toLowerCase()}.`,mine:true,preset:S.type});
+  store("hs-saved",saved);toast("Saved. You'll find it under Audits.");
+}
+
+/* ---------- audits ---------- */
+const AU={filter:"all",flag:false,q:"",sort:"new",pick:[]};
+const FILTERS=[["all","All"],["road","Roads"],["shelter","Shelters"],["roof","Roofs"],["canopy","Street trees"]];
+function audits(){return[...(store("hs-saved")||[]),...BASE_AUDITS]}
+function renderAudits(){
+  const all=audits();
+  const avg=Math.round(all.reduce((s,a)=>s+a.eth,0)/all.length);
+  $("#au-stats").innerHTML=`
+    <div class="metric"><span class="label">Places checked</span><span class="v num">${all.length}</span><span class="n muted">${all.filter(a=>a.mine).length} saved by you</span></div>
+    <div class="metric"><span class="label">Average fairness score</span><span class="v num tone-${toneFor(avg)}">${avg}<small>/100</small></span><span class="n muted">Grade ${grade(avg)}, before any fixes</span></div>
+    <div class="metric"><span class="label">Need action</span><span class="v num tone-bad">${all.filter(a=>a.status==="bad").length}</span><span class="n muted">Places to fix first</span></div>
+    <div class="metric"><span class="label">Reviewed by a peer</span><span class="v num">${all.filter(a=>a.reviewed).length}</span><span class="n muted">of ${all.length} audits</span></div>`;
+  $("#au-chips").innerHTML=FILTERS.map(([k,l])=>`<button type="button" class="chip" data-f="${k}" aria-pressed="${AU.filter===k}">${l} (${k==="all"?all.length:all.filter(a=>a.type===k).length})</button>`).join("")+
+    `<button type="button" class="chip flag" data-flag="1" aria-pressed="${AU.flag}">Needs action (${all.filter(a=>a.status==="bad").length})</button>`;
+  const q=AU.q.trim().toLowerCase();
+  let list=all.filter(a=>(AU.filter==="all"||a.type===AU.filter)&&(!AU.flag||a.status==="bad")&&(!q||(a.ref+" "+a.place+" "+a.finding).toLowerCase().includes(q)));
+  const so={new:(a,b)=>b.date.localeCompare(a.date),old:(a,b)=>a.date.localeCompare(b.date),ethics:(a,b)=>a.eth-b.eth,hot:(a,b)=>b.temp-a.temp}[AU.sort];
+  list.sort(so);
+  $("#au-count").textContent=`Showing ${list.length} of ${all.length}`;
+  $("#au-items").innerHTML=list.length?list.map(a=>{const tn=a.status;return`
+    <article class="panel rec rule-${tn}">
+      <div class="panel-h"><h3>${esc(TYPES[a.type].label)}</h3><span class="tag ${tn}">${statusLabel(tn)}</span></div>
+      <div class="panel-b">
+        <div class="asset-title"><h2 style="font-size:18px">${esc(a.place)}</h2><div class="meta num"><span>Checked ${fmtDate(a.date)}</span><span>${esc(a.coords)}</span><span>Ref. ${esc(a.ref)}</span></div></div>
+        <div class="metrics">
+          <div class="metric"><span class="label">Surface temp</span><span class="v num tone-${a.temp>=50?"bad":a.temp>=40?"warn":"good"}">${a.temp.toFixed(1)}<small>°C</small></span><span class="n muted num">${Math.abs(a.delta).toFixed(1)}°C ${a.delta>0?"hotter than the air":a.type==="roof"?"cooler than before":"cooler than the air"}</span></div>
+          <div class="metric"><span class="label">Heat resilience</span><span class="v num tone-${toneFor(a.res)}">${a.res}<small>/100</small></span><span class="n muted">${a.res>=75?"Copes well":a.res>=50?"Needs work":"Struggles badly"}</span></div>
+          <div class="metric"><span class="label">Fairness score</span><span class="v num tone-${toneFor(a.eth)}">${a.eth}<small>/100</small></span><span class="n muted">Grade ${grade(a.eth)}</span></div>
+        </div>
+        <p class="finding">${esc(a.finding)}</p>
+        <div class="rec-foot">
+          <label class="chk"><input type="checkbox" data-pick="${esc(a.ref)}" ${AU.pick.includes(a.ref)?"checked":""}> Compare</label>
+          <span class="muted" style="font-size:13.5px">${esc(a.reviewer||(a.reviewed?"Peer reviewed":"Waiting for peer review"))}</span>
+          <div class="btn-row">${a.preset?`<button type="button" class="btn sm" data-open="${a.preset}">Open analysis</button>`:""}${a.mine?`<button type="button" class="btn sm danger" data-del="${esc(a.ref)}">Delete</button>`:""}</div>
+        </div>
+      </div>
+    </article>`}).join(""):`<div class="empty">Nothing matches that. Try a different word or filter.</div>`;
+  renderCompare(all);
+}
+function renderCompare(all){
+  AU.pick=AU.pick.filter(r=>all.some(a=>a.ref===r));
+  $("#cmp-n").textContent=AU.pick.length+" of 2";
+  if(AU.pick.length<2){$("#cmp").innerHTML=`<p style="font-size:14.5px;color:var(--ink-2)">Tick <b>Compare</b> on any two places to see them side by side.</p>${AU.pick.length?`<p class="muted" style="font-size:14px">Selected: ${esc(AU.pick[0])}</p>`:""}`;return}
+  const [A,B]=AU.pick.map(r=>all.find(a=>a.ref===r));
+  const row=(l,a,b,u,fmt=v=>v)=>{const d=+(a-b).toFixed(1);return`<tr><td>${l}</td><td>${fmt(a)}${u}</td><td>${fmt(b)}${u}</td><td class="${d>0?"tone-bad":d<0?"tone-good":""}">${d>0?"+":""}${fmt(d)}${u}</td></tr>`};
+  $("#cmp").innerHTML=`<div class="table-wrap"><table class="cmp"><thead><tr><th>Measure</th><th>${esc(A.ref)}</th><th>${esc(B.ref)}</th><th>Gap</th></tr></thead><tbody>
+    ${row("Surface temp",A.temp,B.temp,"°C",v=>(+v).toFixed(1))}
+    <tr><td>Heat resilience</td><td>${A.res}</td><td>${B.res}</td><td class="${A.res<B.res?"tone-bad":A.res>B.res?"tone-good":""}">${A.res-B.res>0?"+":""}${A.res-B.res}</td></tr>
+    <tr><td>Fairness score</td><td>${A.eth}</td><td>${B.eth}</td><td class="${A.eth<B.eth?"tone-bad":A.eth>B.eth?"tone-good":""}">${A.eth-B.eth>0?"+":""}${A.eth-B.eth}</td></tr>
+  </tbody></table></div>
+  <p class="note">${esc(A.ref)} is <b>${Math.abs(A.temp-B.temp).toFixed(1)}°C ${A.temp>=B.temp?"hotter":"cooler"}</b> than ${esc(B.ref)}, with a fairness score <b>${Math.abs(A.eth-B.eth)} points ${A.eth>=B.eth?"higher":"lower"}</b>.</p>
+  <button type="button" class="btn sm" id="cmp-clear">Clear selection</button>`;
+  $("#cmp-clear").onclick=()=>{AU.pick=[];renderAudits()};
+}
+
+/* ---------- cases, library, ethics ---------- */
+function renderCases(){
+  $("#case-list").innerHTML=TYPE_ORDER.map(k=>{const T=TYPES[k],s=weighted(T.criteria);return`
+    <article class="panel case rule-${T.status}">
+      <canvas data-scene="${k}" width="480" height="300" aria-label="Drawing of the ${esc(T.label.toLowerCase())} example"></canvas>
+      <div class="panel-h"><h2>${esc(T.label)}</h2><span class="tag ${T.status}">${esc(T.statusText)}</span></div>
+      <div class="panel-b">
+        <h3 style="font-size:19px;line-height:1.25">${esc(T.place)}</h3>
+        <p>${esc(T.summary)} ${esc(T.equity.text.split(". ")[0])}.</p>
+        <div class="metrics">${T.metrics.map(m=>`<div class="metric"><span class="label">${esc(m[0])}</span><span class="v num tone-${m[4]}" style="font-size:20px">${esc(m[1])}<small>${esc(m[2])}</small></span></div>`).join("")}</div>
+        <div class="rec-foot"><span class="muted" style="font-size:14px">With the fix, it scores <b style="color:var(--ink)">${s} out of 100</b></span><button type="button" class="btn primary sm" data-open="${k}">Open this example</button></div>
+      </div>
+    </article>`}).join("");
+  $$("canvas[data-scene]").forEach(c=>drawScene(c.dataset.scene,c,480,300));
+}
+function renderLibrary(){
+  $("#lib-list").innerHTML=LIBRARY.map(l=>`
+    <article class="panel lib">
+      <div class="panel-h"><h2>${esc(l.cat)}</h2><span class="tag">Cost ${l.cost}</span></div>
+      <div class="panel-b">
+        <h3 style="font-size:19px;line-height:1.25">${esc(l.name)}</h3>
+        <div class="big num">${esc(l.cool)}</div>
+        <dl>
+          <div><dt>Best for</dt><dd>${esc(l.best)}</dd></div>
+          <div><dt>Looking after it</dt><dd>${esc(l.life)}</dd></div>
+          <div><dt>Keep in mind</dt><dd>${esc(l.watch)}</dd></div>
+        </dl>
+      </div>
+    </article>`).join("")+`<p class="muted" style="font-size:14px;grid-column:1/-1">Cost: $ under $50 per m² or per tree · $$ $50 to $150 per m² · $$$ over $150 per m² or a custom build. Rough guides only.</p>`;
+}
+function renderEthics(){
+  $("#crit-table").innerHTML=`<thead><tr><th>Criterion</th><th>The question we ask</th><th style="text-align:right">Weight</th></tr></thead><tbody>`+
+   CRITERIA.map(c=>`<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.q)}</td><td class="w num">${c.w}%</td></tr>`).join("")+`</tbody>`;
+}
+
+/* ---------- router ---------- */
+const VIEWS=["analyze","audits","cases","library","ethics"];
+function route(){
+  const h=location.hash.slice(1);const v=VIEWS.includes(h)?h:"analyze";
+  $$("[data-view]").forEach(s=>s.hidden=s.dataset.view!==v);
+  $$("[data-nav]").forEach(a=>{a.classList.toggle("on",a.dataset.nav===v);if(a.dataset.nav===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
+  if(v==="audits")renderAudits();
+  window.scrollTo(0,0);
+}
+
+/* ---------- events ---------- */
+$("#file").addEventListener("change",e=>{loadFile(e.target.files[0]);e.target.value=""});
+const drop=$("#drop");
+["dragenter","dragover"].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.add("over")}));
+["dragleave","drop"].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.remove("over")}));
+drop.addEventListener("drop",e=>loadFile(e.dataTransfer.files[0]));
+$("#types").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(S.source==="sample")loadSample(b.dataset.type);else{S.type=b.dataset.type;refresh()}});
+$("#views").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;S.view=b.dataset.v;paint()});
+$("#back-sample").onclick=()=>{$("#upload-err").hidden=true;loadSample(S.type)};
+$("#try-street").onclick=()=>{const c=document.createElement("canvas");drawScene("road",c,1200,750);runGate(null,{canvas:c,name:"street-example.png"})};
+$("#try-selfie").onclick=()=>{const c=document.createElement("canvas");drawSelfie(c);runGate(null,{canvas:c,name:"selfie-example.png"})};
+$("#q").addEventListener("input",e=>{AU.q=e.target.value;renderAudits()});
+$("#au-sort").addEventListener("change",e=>{AU.sort=e.target.value;renderAudits()});
+$("#au-chips").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.flag)AU.flag=!AU.flag;else AU.filter=b.dataset.f;renderAudits()});
+document.addEventListener("change",e=>{const p=e.target.dataset&&e.target.dataset.pick;if(!p)return;
+  if(e.target.checked){AU.pick=AU.pick.filter(r=>r!==p);AU.pick.push(p);if(AU.pick.length>2)AU.pick.shift()}else AU.pick=AU.pick.filter(r=>r!==p);renderAudits()});
+document.addEventListener("click",e=>{
+  const o=e.target.closest("[data-open]");if(o){loadSample(o.dataset.open);location.hash="analyze";return}
+  const d=e.target.closest("[data-del]");if(d){store("hs-saved",(store("hs-saved")||[]).filter(a=>a.ref!==d.dataset.del));renderAudits();toast("Deleted "+d.dataset.del)}
+});
+window.addEventListener("hashchange",route);
+
+renderCases();renderLibrary();renderEthics();loadSample("road");route();
+})();
+</script>
+
+</body>
+</html>
